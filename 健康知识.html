@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日养生知识 | 健康生活指南</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #4CAF50;
+            --light-green: #8BC34A;
+            --pale-green: #C8E6C9;
+            --beige: #F5F5DC;
+            --light-beige: #FFF9F0;
+            --dark-text: #333333;
+            --medium-text: #555555;
+            --light-text: #777777;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-beige);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 头部样式 */
+        header {
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path fill="rgba(255,255,255,0.05)" d="M0,0 L100,0 L100,100 Z" /></svg>');
+            animation: float 20s infinite linear;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo i {
+            font-size: 2.2rem;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .date-display {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+        }
+        
+        /* 导航样式 */
+        nav {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: var(--dark-text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary-green);
+            transition: var(--transition);
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-green);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: var(--light-beige);
+            border-radius: 50px;
+            padding: 0.4rem 1rem;
+            width: 250px;
+        }
+        
+        .search-box input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            padding: 0.4rem 0.8rem;
+            outline: none;
+            color: var(--dark-text);
+        }
+        
+        .search-box i {
+            color: var(--light-green);
+        }
+        
+        /* 主要内容区域 */
+        main {
+            padding: 2rem 0;
+        }
+        
+        .page-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            color: var(--primary-green);
+        }
+        
+        .page-title i {
+            margin-right: 12px;
+            font-size: 1.8rem;
+        }
+        
+        /* 今日内容区域 */
+        .today-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        @media (min-width: 992px) {
+            .today-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .content-card {
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            height: 100%;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, var(--primary-green), var(--light-green));
+            color: white;
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .card-tag {
+            background-color: rgba(255, 255, 255, 0.3);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .info-item {
+            margin-bottom: 1.2rem;
+        }
+        
+        .info-item h3 {
+            color: var(--primary-green);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .info-item h3 i {
+            margin-right: 8px;
+            font-size: 1rem;
+        }
+        
+        .info-item p, .info-item ul {
+            color: var(--medium-text);
+            margin-left: 1.5rem;
+        }
+        
+        .info-item ul {
+            padding-left: 1.2rem;
+        }
+        
+        .info-item li {
+            margin-bottom: 0.3rem;
+        }
+        
+        .example-box {
+            background-color: var(--pale-green);
+            border-left: 4px solid var(--light-green);
+            padding: 1rem;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin-top: 1rem;
+        }
+        
+        .example-box strong {
+            color: var(--primary-green);
+        }
+        
+        /* 日历和检索区域 */
+        .tools-section {
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            color: var(--primary-green);
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+        }
+        
+        .tools-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        @media (min-width: 768px) {
+            .tools-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        /* 日历样式 */
+        .calendar-container {
+            background-color: var(--light-beige);
+            border-radius: var(--radius);
+            padding: 1rem;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .calendar-nav button {
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .calendar-nav button:hover {
+            background-color: var(--light-green);
+        }
+        
+        .calendar-weekdays, .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .calendar-weekdays div {
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary-green);
+            padding: 0.5rem 0;
+        }
+        
+        .calendar-days div {
+            text-align: center;
+            padding: 0.8rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .calendar-days div:hover {
+            background-color: var(--pale-green);
+        }
+        
+        .current-day {
+            background-color: var(--primary-green);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .has-content {
+            position: relative;
+        }
+        
+        .has-content::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 5px;
+            background-color: var(--light-green);
+            border-radius: 50%;
+        }
+        
+        /* 往期内容区域 */
+        .past-content-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .past-item {
+            background-color: var(--light-beige);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--light-green);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .past-item:hover {
+            background-color: var(--pale-green);
+            transform: translateX(5px);
+        }
+        
+        .past-item h4 {
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+        
+        .past-item p {
+            color: var(--medium-text);
+            font-size: 0.9rem;
+        }
+        
+        /* 页脚 */
+        footer {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-logo i {
+            font-size: 2rem;
+            margin-right: 10px;
+        }
+        
+        .copyright {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* 动画效果 */
+        @keyframes float {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .leaf-decoration {
+            position: fixed;
+            width: 100px;
+            height: 100px;
+            opacity: 0.1;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .leaf1 {
+            top: 10%;
+            left: 5%;
+            color: var(--primary-green);
+            animation: float 20s infinite linear;
+        }
+        
+        .leaf2 {
+            bottom: 15%;
+            right: 5%;
+            color: var(--light-green);
+            animation: float 25s infinite linear reverse;
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--light-beige);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--light-green);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-green);
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .card-tag {
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 装饰元素 -->
+    <div class="leaf-decoration leaf1">
+        <i class="fas fa-leaf fa-5x"></i>
+    </div>
+    <div class="leaf-decoration leaf2">
+        <i class="fas fa-seedling fa-5x"></i>
+    </div>
+    
+    <!-- 头部 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <h1>每日养生知识</h1>
+            </div>
+            <div class="date-display">
+                <i class="far fa-calendar-alt"></i>
+                <span id="current-date">2023年10月27日 星期五</span>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 导航栏 -->
+    <nav>
+        <div class="container nav-container">
+            <div class="nav-links">
+                <a href="#today-content" class="active">今日推荐</a>
+                <a href="#health-tips">养生知识库</a>
+                <a href="#disease-guide">疾病应对</a>
+                <a href="#seasonal">节气养生</a>
+                <a href="#about">关于我们</a>
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="搜索往期内容...">
+            </div>
+        </div>
+    </nav>
+    
+    <!-- 主要内容 -->
+    <main class="container">
+        <!-- 今日内容 -->
+        <div class="page-title">
+            <i class="fas fa-star"></i>
+            <h2>今日养生指南</h2>
+        </div>
+        
+        <div class="today-content" id="today-content">
+            <!-- 今日养生知识 -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h2>今日养生知识</h2>
+                    <div class="card-tag">饮食调理</div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <h3><i class="fas fa-utensils"></i> 食材搭配：山药枸杞粥</h3>
+                        <p>山药健脾益胃，枸杞滋补肝肾，两者搭配煮粥，适合秋冬季节温补。</p>
+                    </div>
+                    
+                    <div class="info-item">
+                        <h3><i class="fas fa-list-ol"></i> 具体操作步骤</h3>
+                        <ul>
+                            <li>准备山药100克、枸杞15克、大米50克</li>
+                            <li>山药去皮切小块，与大米一同放入锅中</li>
+                            <li>加入适量清水，大火煮沸后转小火熬煮30分钟</li>
+                            <li>加入枸杞继续煮10分钟即可</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-item">
+                        <h3><i class="fas fa-users"></i> 适用人群</h3>
+                        <p>脾胃虚弱、容易疲劳、免疫力低下者，尤其适合中老年人和办公室久坐族。</p>
+                    </div>
+                    
+                    <div class="info-item">
+                        <h3><i class="fas fa-exclamation-circle"></i> 注意事项</h3>
+                        <p>糖尿病患者应减少大米用量；感冒发热期间不宜食用；山药处理时注意防止皮肤过敏。</p>
+                    </div>
+                    
+                    <div class="example-box">
+                        <strong>实用案例：</strong> 王先生，45岁，长期办公室工作，常感疲劳、消化不良。连续食用山药枸杞粥两周后，消化功能改善，精力明显提升。
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 今日疾病应对 -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h2>常见疾病应对</h2>
+                    <div class="card-tag">失眠</div>
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <h3><i class="fas fa-stethoscope"></i> 症状识别</h3>
+                        <p>入睡困难（超过30分钟）、睡眠维持困难（夜间醒来2次以上）、早醒且无法再次入睡，伴有日间疲劳、注意力不集中、情绪烦躁等。</p>
+                    </div>
+                    
+                    <div class="info-item">
+                        <h3><i class="fas fa-home"></i> 居家缓解技巧</h3>
+                        <ul>
+                            <li><strong>穴位按摩：</strong>睡前按摩神门穴（手腕横纹尺侧端）和安眠穴（耳垂后凹陷处）各3分钟</li>
+                            <li><strong>呼吸调节：</strong>采用4-7-8呼吸法（吸气4秒，屏气7秒，呼气8秒）</li>
+                            <li><strong>环境调整：</strong>保持卧室温度18-22℃，使用遮光窗帘，减少噪音干扰</li>
+                            <li><strong>食疗方案：</strong>睡前1小时饮用温牛奶或小米粥，避免咖啡因和酒精</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-item">
+                        <h3><i class="fas fa-shield-alt"></i> 预防要点</h3>
+                        <ul>
+                            <li>建立规律的睡眠时间表，每天同一时间睡觉和起床</li>
+                            <li>下午4点后避免摄入咖啡、浓茶等刺激性饮料</li>
+                            <li>睡前1小时避免使用电子设备，可改为阅读纸质书</li>
+                            <li>白天适度运动，但睡前3小时避免剧烈运动</li>
+                            <li>学习放松技巧，如冥想、渐进式肌肉放松等</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="example-box">
+                        <strong>专业提示：</strong> 如果失眠持续超过一个月，或伴有情绪低落、焦虑等症状，建议及时就医，排除潜在疾病。
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 日历和检索工具 -->
+        <div class="tools-section">
+            <div class="section-title">
+                <i class="far fa-calendar-check"></i>
+                <h3>内容日历与往期检索</h3>
+            </div>
+            
+            <div class="tools-container">
+                <!-- 日历 -->
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <h4 id="current-month">2023年10月</h4>
+                        <div class="calendar-nav">
+                            <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                            <button id="next-month"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="calendar-weekdays">
+                        <div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div>
+                    </div>
+                    <div class="calendar-days" id="calendar-days">
+                        <!-- 日历日期将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                
+                <!-- 往期内容 -->
+                <div>
+                    <div class="section-title">
+                        <i class="fas fa-history"></i>
+                        <h3>往期内容精选</h3>
+                    </div>
+                    <div class="past-content-container" id="past-content">
+                        <!-- 往期内容将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-leaf"></i>
+                <h3>健康生活，从每日养生开始</h3>
+            </div>
+            <p>本网站提供专业、实用的养生知识和疾病应对指南，内容仅供参考，如有严重症状请及时就医。</p>
+            <div class="copyright">
+                <p>&copy; 2023 每日养生知识科普 | 设计：健康生活团队</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // 设置当前日期
+        const now = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+        document.getElementById('current-date').textContent = now.toLocaleDateString('zh-CN', options);
+        
+        // 日历功能
+        let currentMonth = now.getMonth();
+        let currentYear = now.getFullYear();
+        
+        function renderCalendar(month, year) {
+            const monthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+            document.getElementById('current-month').textContent = year + "年" + monthNames[month];
+            
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDay = firstDay.getDay();
+            
+            const calendarDays = document.getElementById('calendar-days');
+            calendarDays.innerHTML = '';
+            
+            // 填充空白（上个月的日期）
+            for (let i = 0; i < startingDay; i++) {
+                const emptyDiv = document.createElement('div');
+                calendarDays.appendChild(emptyDiv);
+            }
+            
+            // 填充当前月的日期
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.textContent = day;
+                
+                // 标记当前日期
+                if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
+                    dayDiv.classList.add('current-day');
+                }
+                
+                // 随机标记一些有内容的日期（示例）
+                if (day % 5 === 0 || day % 7 === 0) {
+                    dayDiv.classList.add('has-content');
+                }
+                
+                // 点击日期显示对应内容
+                dayDiv.addEventListener('click', function() {
+                    alert(`查看${year}年${month+1}月${day}日的内容`);
+                });
+                
+                calendarDays.appendChild(dayDiv);
+            }
+        }
+        
+        // 初始化日历
+        renderCalendar(currentMonth, currentYear);
+        
+        // 上个月/下个月按钮
+        document.getElementById('prev-month').addEventListener('click', function() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar(currentMonth, currentYear);
+        });
+        
+        document.getElementById('next-month').addEventListener('click', function() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar(currentMonth, currentYear);
+        });
+        
+        // 往期内容数据
+        const pastContent = [
+            { date: "2023-10-26", title: "秋季润肺：梨子蜂蜜饮", category: "饮食调理", desc: "适合秋季干燥季节，缓解咽喉不适、皮肤干燥问题。" },
+            { date: "2023-10-25", title: "肩颈酸痛缓解方法", category: "穴位按摩", desc: "办公室人群必备，通过简单按摩和拉伸缓解肩颈疲劳。" },
+            { date: "2023-10-24", title: "感冒初期应对策略", category: "疾病预防", desc: "出现感冒征兆时的居家处理技巧，防止病情加重。" },
+            { date: "2023-10-23", title: "脾胃虚弱调理方案", category: "体质养护", desc: "针对脾胃功能不佳人群的饮食和生活调整建议。" },
+            { date: "2023-10-20", title: "高血压饮食注意事项", category: "疾病管理", desc: "高血压患者日常饮食的宜忌和推荐食谱。" },
+            { date: "2023-10-18", title: "改善睡眠质量的穴位按摩", category: "穴位按摩", desc: "睡前按摩几个关键穴位，帮助快速入睡并提高睡眠质量。" },
+        ];
+        
+        // 渲染往期内容
+        const pastContentContainer = document.getElementById('past-content');
+        pastContent.forEach(item => {
+            const pastItem = document.createElement('div');
+            pastItem.className = 'past-item';
+            pastItem.innerHTML = `
+                <h4>${item.title}</h4>
+                <p><i class="far fa-calendar"></i> ${item.date} | <span class="card-tag" style="font-size:0.8rem;padding:0.2rem 0.5rem;">${item.category}</span></p>
+                <p>${item.desc}</p>
+            `;
+            pastItem.addEventListener('click', function() {
+                alert(`查看${item.date}的详细内容：${item.title}`);
+            });
+            pastContentContainer.appendChild(pastItem);
+        });
+        
+        // 搜索功能
+        document.getElementById('search-input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const pastItems = document.querySelectorAll('.past-item');
+            
+            pastItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+        
+        // 导航栏滚动效果
+        document.querySelectorAll('.nav-links a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#today-content') {
+                    window.scrollTo({
+                        top: document.querySelector('.today-content').offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                } else if (targetId === '#about') {
+                    window.scrollTo({
+                        top: document.querySelector('footer').offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // 添加卡片悬停效果
+        document.querySelectorAll('.content-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
