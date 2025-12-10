@@ -1,0 +1,43 @@
+name: 每日更新养生内容
+
+on:
+  schedule:
+    # 计划任务：每天UTC时间16:00运行，即北京时间 00:00[citation:6]
+    # 注意：GitHub Actions的cron基于UTC时间，不支持秒级设定[citation:6]
+    - cron: '0 16 * * *'
+  workflow_dispatch: # 允许在网页手动触发
+
+jobs:
+  generate-and-deploy:
+    runs-on: ubuntu-latest
+    # 设置运行环境时区为上海，让脚本内日期获取更准确[citation:2]
+    env:
+      TZ: Asia/Shanghai
+    steps:
+      - name: 🛎️ 检出代码
+        uses: actions/checkout@v4
+        with:
+          # 授予工作流写入仓库的权限，这是解决“permission denied”的关键！[citation:10]
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ⚙️ 设置Node.js环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x' # 指定Node.js版本，保持环境一致
+
+      - name: 📦 安装依赖
+        run: npm install axios # 安装脚本所需的axios库
+
+      - name: 🍃 生成今日养生内容
+        # 将GitHub仓库Secrets中设置的AI_API_KEY注入到此步骤的环境变量
+        env:
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+        run: node generate-content.js # 运行我们的脚本
+
+      - name: 💾 提交更新
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data/today.json
+          # 检查是否有文件变动，有则提交
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 自动更新: $(date +'%Y-%m-%d') 的养生内容" && git push)
